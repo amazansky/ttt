@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -g -std=c99 -Wall
+CFLAGS = -g -std=c99 -lncurses -Wall -Wextra
 
 GEN_SOURCES = ttt.c
 GEN_HEADERS = ttt.h
