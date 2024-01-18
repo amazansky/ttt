@@ -1,5 +1,6 @@
 CC = clang
-CFLAGS = -g -std=c99 -lncurses -Wall -Wextra
+CFLAGS = -g -std=c99 -Wall -Wextra -Wpedantic
+LFLAGS = -lncurses
 
 GEN_SOURCES = ttt.c
 GEN_HEADERS = ttt.h
@@ -9,7 +10,7 @@ GEN_HEADERS = ttt.h
 all: ttt
 
 ttt: $(GEN_SOURCES) $(GEN_HEADERS)
-	$(CC) $(CFLAGS) $(GEN_SOURCES) -o $@
+	$(CC) $(CFLAGS) -o $@ $(GEN_SOURCES) $(LFLAGS)
 clean:
 	rm -f ttt
 	rm -rf ttt.dSYM

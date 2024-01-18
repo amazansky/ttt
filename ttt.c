@@ -9,28 +9,46 @@
 #define NUM_WORDS 9  // TODO: don't hardcode
 
 int main(int argc, char const *argv[]) {
+    // TODO: use argc and argv to display (or not) an options menu
     char *str = "The quick brown fox jumps over the lazy dog.";
 
     initscr();
+    if (has_colors()) {
+        start_color();
+        init_pair(1, COLOR_BLACK, COLOR_BLUE);
+    } else {
+        // TODO: address this case. for now, just exit
+        fprintf(stderr, "error: terminal colors not available\n");
+        finish(1);
+    }
     noecho();
 
     struct timeval start;
     struct timeval end;
 
-    // TODO: make it so that the first keypress of the test starts the timer
-    printw("Press any key to begin...\n");
+    printw("%s\n", str);
+    printw("\nYour test will begin when you press the first letter...");
+    // TODO: have this line (^) change to wpm during the middle of the test,
+    // then the results afterwards
     refresh();
 
-    getch();  // start timer on keypress
-    printw("%s\n", str);
-    refresh();
-    if (gettimeofday(&start, NULL)) {
-        perror("gettimeofday");  // TODO: how does perror work in ncurses?
-        finish(1);
-    }
+    move(0, 0);  // TODO: don't hardcode
+    attrset(COLOR_PAIR(1));
+
+    int started = 0;
 
     while (*str) {
         char ch = getch();
+        if (!started) {
+            // start timer
+            if (gettimeofday(&start, NULL)) {
+                // TODO: how does perror work in ncurses?
+                perror("gettimeofday");
+                finish(1);
+            }
+            started = 1;
+        }
+
         if (ch == ERR) {
             finish(1);
         } else if (ch == str[0]) {
@@ -46,6 +64,8 @@ int main(int argc, char const *argv[]) {
         finish(1);
     }
 
+    attrset(COLOR_PAIR(0));
+
     long delta_sec = end.tv_sec - start.tv_sec;
     long delta_usec = end.tv_usec - start.tv_usec;
 
@@ -53,7 +73,7 @@ int main(int argc, char const *argv[]) {
     float min = sec / 60;
     float wpm = NUM_WORDS / min;
 
-    printw("\nTook %.2fs (%.0f wpm). Press any key to exit.\n", sec, wpm);
+    printw("\n\nTook %.2fs (%.0f wpm). Press any key to exit.", sec, wpm);
     refresh();
 
     getch();
@@ -63,7 +83,7 @@ int main(int argc, char const *argv[]) {
 
 static void finish(int status) {
     if (endwin()) {
-        fprintf(stderr, "error closing ncurses window");
+        fprintf(stderr, "error: while closing ncurses window\n");
     }
     exit(status);
 }

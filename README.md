@@ -1,6 +1,6 @@
 # ttt
 
-`ttt` (short for "terminal-based typing test") is a a command-line utility to test your typing speed. It's written using C and ncurses.
+`ttt` (short for "terminal-based typing test") is a a command-line utility to measure your typing speed. It's written using C and ncurses.
 
 ## Setup
 
